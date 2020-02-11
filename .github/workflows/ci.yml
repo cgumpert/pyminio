@@ -13,6 +13,5 @@ jobs:
       run: docker-compose up -d
     - name: Run tests
       run: docker-compose run mc_client pytest --cov=pyminio -v -r A
-    - run: docker-compose run mc_client echo $CODECOV_TOKEN
-    - name: Upload code coverage
+    - name: Upload code coverage report
       run: docker-compose run mc_client codecov -t $CODECOV_TOKEN
