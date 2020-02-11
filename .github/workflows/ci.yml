@@ -1,6 +1,6 @@
 name: CI
 
-on: [push]
+on: [push, pull_request]
 
 env:
   CODECOV_TOKEN: e2bfd93c-7364-4b08-810a-5b85551095df
