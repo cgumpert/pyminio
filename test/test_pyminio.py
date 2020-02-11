@@ -66,7 +66,7 @@ class TestAdminClient:
 
         policies = c.admin.policy.list(self.host)
         for p in policies:
-            if p in {'readonly', 'writeonly', 'readwrite'}:
+            if p in {'readonly', 'writeonly', 'readwrite', 'diagnostics'}:
                 continue
             c.admin.policy.remove(self.host, p)
 
@@ -179,7 +179,7 @@ class TestAdminClient:
     def test_policy(self, mc):
         # by default, we have readonly, readwrite and writeonly policies pre-defined
         assert set(mc.admin.policy.list(self.host)) == {
-            'readonly', 'writeonly', 'readwrite'}
+            'readonly', 'writeonly', 'readwrite', 'diagnostics'}
 
         with pytest.raises(RuntimeError, match=r"'any_policy' was not found"):
             mc.admin.policy.info(self.host, 'any_policy')
@@ -211,7 +211,7 @@ class TestAdminClient:
             ]
         }
         mc.admin.policy.add(self.host, policy_name, policy_definition)
-        assert len(mc.admin.policy.list(self.host)) == 4
+        assert len(mc.admin.policy.list(self.host)) == 5
         assert policy_name in mc.admin.policy.list(self.host)
         policy_json = mc.admin.policy.info(
             self.host, policy_name)['policyJSON']
@@ -221,16 +221,16 @@ class TestAdminClient:
 
         # test idempotence
         mc.admin.policy.add(self.host, policy_name, policy_definition)
-        assert len(mc.admin.policy.list(self.host)) == 4
+        assert len(mc.admin.policy.list(self.host)) == 5
 
         # test policy update
         policy_definition['Id'] = "MyUpdatedPolicy"
         mc.admin.policy.add(self.host, policy_name, policy_definition)
-        assert len(mc.admin.policy.list(self.host)) == 4
+        assert len(mc.admin.policy.list(self.host)) == 5
         new_policy_json = mc.admin.policy.info(
             self.host, policy_name)['policyJSON']
         assert policy_json != new_policy_json
 
         mc.admin.policy.remove(self.host, policy_name)
-        assert len(mc.admin.policy.list(self.host)) == 3
+        assert len(mc.admin.policy.list(self.host)) == 4
         assert policy_name not in mc.admin.policy.list(self.host)

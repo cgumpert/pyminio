@@ -1,0 +1,18 @@
+name: CI
+
+on: [push]
+
+env:
+  CODECOV_TOKEN: e2bfd93c-7364-4b08-810a-5b85551095df
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Bring up docker container
+      run: docker-compose up -d
+    - name: Run tests
+      run: docker-compose run mc_client pytest --cov=pyminio -v -r A
+    - run: docker-compose run mc_client echo $CODECOV_TOKEN
+    - name: Upload code coverage
+      run: docker-compose run mc_client codecov -t $CODECOV_TOKEN
